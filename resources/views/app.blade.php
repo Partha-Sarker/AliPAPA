@@ -9,11 +9,13 @@
 
     <!-- Fonts -->
     <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.js') }}"></script>
+    {{-- <script src="{{ asset('js/bootstrap.js') }}"></script> --}}
+    <script src="{{ asset('js/custom.js') }}"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 </head>
 
 <body>
