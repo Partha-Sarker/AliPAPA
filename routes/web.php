@@ -12,3 +12,5 @@
 */
 
 Route::resource('', 'ProductController');
+// Route::put('', [ProductController::class, 'search']);
+Route::put('/', 'ProductController@search')->name('search');

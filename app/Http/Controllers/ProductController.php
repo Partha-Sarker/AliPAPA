@@ -18,6 +18,11 @@ class ProductController extends Controller
         return view('welcome')->with('products', $products);
     }
 
+    public function search(Request $request) {
+        dd('hello');
+        return 'hello';
+    }
+
     /**
      * Show the form for creating a new resource.
      *
