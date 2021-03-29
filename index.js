@@ -2,6 +2,7 @@ const express = require('express');
 const cheerio = require('cheerio');
 const request = require('request');
 const db = require('mysql-sync-query');
+var fs = require('fs');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -29,13 +30,22 @@ app.get('/', (req, res) => {
 
 async function getHome(req, res) {
     const filter = req.query.name;
+
+    // rows = JSON.parse(fs.readFileSync('products.txt', { encoding: 'utf8', flag: 'r' }));
+
     let rows = await dbObj.executeQuery('SELECT * FROM products');
-    // rows = rows.slice(8);
+
     for (let i = 0; i < rows.length; i++) {
         const html = await getHTML(rows[i].link);
         scrapeEbay(rows[i], html);
         console.log(i + 1, 'done');
     }
+
+    if (filter != undefined) {
+        const regex = new RegExp(filter, 'i');
+        rows = rows.filter(value => regex.test(value.name));
+    }
+
     res.render('demo', { products: rows });
 }
 

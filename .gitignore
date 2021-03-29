@@ -2,6 +2,10 @@
 
 test.html
 test.txt
+products.json
+products.txt
+
+package-lock.json
   
 # Logs
 logs
