@@ -6,6 +6,7 @@ var fs = require('fs');
 
 const app = express();
 app.set('view engine', 'ejs');
+app.use(express.static('public'))
 const PORT = process.env.PORT || 5000;
 app.listen(PORT)
 
@@ -24,12 +25,19 @@ dbObj.connectLocal("localhost", 3306, "root", "");
 
 
 app.get('/', (req, res) => {
-    getHome(req, res);
+    getHome(req, res, false);
+});
+
+app.get('/search', (req, res) => {
+    getHome(req, res, true);
 });
 
 
-async function getHome(req, res) {
-    const filter = req.query.name;
+async function getHome(req, res, shouldFilter) {
+    console.log(req.query);
+    const search = req.query.search;
+    const sort = req.query.sort;
+    const order = req.query.order;
 
     // rows = JSON.parse(fs.readFileSync('products.txt', { encoding: 'utf8', flag: 'r' }));
 
@@ -41,12 +49,28 @@ async function getHome(req, res) {
         console.log(i + 1, 'done');
     }
 
-    if (filter != undefined) {
-        const regex = new RegExp(filter, 'i');
+    if (search != '') {
+        const regex = new RegExp(search, 'i');
         rows = rows.filter(value => regex.test(value.name));
     }
+    switch (sort) {
+        case 'name':
+            rows = rows.sort(compareName);
+            break;
 
-    res.render('demo', { products: rows });
+        case 'price':
+            rows = rows.sort(comparePrice);
+            break;
+        default:
+            rows = rows.sort(compareName);
+    }
+    if (order == 'desc')
+        rows = rows.reverse();
+
+    if (!shouldFilter)
+        res.render('demo', { products: rows });
+    else
+        res.send(rows);
 }
 
 function getHTML(url) {
@@ -78,4 +102,30 @@ function scrapeEbay(product, html) {
     } catch (error) {
         product.price = 'Not Available';
     }
+}
+
+
+function compareName(a, b) {
+    let nameA = a.name.toUpperCase();
+    let nameB = b.name.toUpperCase();
+    if (nameA < nameB) {
+        return -1;
+    }
+    if (nameA > nameB) {
+        return 1;
+    }
+    return 0;
+}
+
+
+function comparePrice(a, b) {
+    let priceA = a.price;
+    let priceB = b.price;
+    if (priceA < priceB) {
+        return -1;
+    }
+    if (priceA > priceB) {
+        return 1;
+    }
+    return 0;
 }
